@@ -87,7 +87,7 @@ int main() {
     }
     std::cout << std::endl;
 
-    std::cout << " " << quickSort.getPartitionCount() << std::endl;
+    std::cout << " Number of basic operation :" << quickSort.getPartitionCount() << std::endl;
 
     return 0;
 }
