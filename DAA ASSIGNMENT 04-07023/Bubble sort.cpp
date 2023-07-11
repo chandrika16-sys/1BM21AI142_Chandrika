@@ -1,36 +1,74 @@
 #include <iostream>
-using namespace std;
+#include <ctime>
+#include <cstdlib>
 
-void bubbleSort(int array[], int size) {
+class Clock {
+private:
+    std::clock_t start_time;
 
-  for (int step = 0; step < size; ++step) {
-
-    for (int i = 0; i < size - step; ++i) {
-
-      if (array[i] > array[i + 1]) {
-
-        int temp = array[i];
-        array[i] = array[i + 1];
-        array[i + 1] = temp;
-      }
+public:
+    void start() {
+        start_time = std::clock();
     }
-  }
+
+    double elapsed() {
+        std::clock_t end_time = std::clock();
+        return static_cast<double>(end_time - start_time) / CLOCKS_PER_SEC;
+    }
+};
+
+void bubbleSort(int arr[], int size, int& basic_ops) {
+    for (int i = 0; i < size - 1; i++) {
+        for (int j = 0; j < size - i - 1; j++) {
+            basic_ops++; // Counting the number of basic operations
+
+            if (arr[j] > arr[j + 1]) {
+                std::swap(arr[j], arr[j + 1]);
+                basic_ops++; // Counting the number of basic operations
+            }
+        }
+    }
 }
 
-void printArray(int array[], int size) {
-  for (int i = 0; i < size; ++i) {
-    cout << "  " << array[i];
-  }
-  cout << "\n";
+void generateRandomInput(int arr[], int size) {
+    for (int i = 0; i < size; i++) {
+        arr[i] = std::rand() % 100; // Generate a random number between 0 and 99
+    }
 }
 
 int main() {
-  int data[] = {-2, 45, 0, 11, -9};
+    const int size = 10;
+    int arr[size];
 
-  int size = sizeof(data) / sizeof(data[0]);
+    std::srand(std::time(nullptr)); // Seed the random number generator
 
-  bubbleSort(data, size);
+    generateRandomInput(arr, size);
 
-  cout << "Sorted Array in Ascending Order:\n";
-  printArray(data, size);
+    std::cout << "Original array: ";
+    for (int i = 0; i < size; i++) {
+        std::cout << arr[i] << " ";
+    }
+    std::cout << std::endl;
+
+    Clock clock;
+    clock.start();
+
+    int basic_ops = 0;
+    bubbleSort(arr, size, basic_ops);
+
+    double elapsed_time = clock.elapsed();
+
+    std::cout << "Sorted array: ";
+    for (int i = 0; i < size; i++) {
+        std::cout << arr[i] << " ";
+    }
+    std::cout << std::endl;
+
+    std::cout << "Elapsed time: " << elapsed_time << " seconds" << std::endl;
+    std::cout << "Number of basic operations: " << basic_ops << std::endl;
+
+    return 0;
 }
+
+
+
