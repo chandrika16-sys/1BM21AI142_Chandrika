@@ -90,7 +90,7 @@ public:
 
 int main() {
     int n;
-    std::cout << "Enter the number of inputs: ";
+    std::cout << "Enter the number of elements: ";
     std::cin >> n;
 
     MergeSort mergeSort;
@@ -116,7 +116,7 @@ int main() {
     }
     std::cout << std::endl;
 
-    std::cout << "Basic operations count: " << mergeSort.getMergeCount() << std::endl;
+    std::cout << "Number of basic operation: " << mergeSort.getMergeCount() << std::endl;
 
     return 0;
 }
