@@ -1,46 +1,51 @@
 #include <iostream>
-#include <vector>
 #include <cstdlib>
 #include <ctime>
 
 class QuickSort {
 private:
-    std::vector<int> data;
-    int operations;
+    class Array {
+    public:
+        int* data;
+        int size;
+
+        Array(int n) : size(n) {
+            data = new int[size];
+        }
+
+        ~Array() {
+            delete[] data;
+        }
+
+        int& operator[](int index) {
+            return data[index];
+        }
+    };
+
+    int partitionCount;
 
 public:
-    QuickSort() : operations(0) {}
+    QuickSort() : partitionCount(0) {}
 
-    void generateRandomData(int size) {
-        data.clear();
-        data.reserve(size);
-
-        std::srand(std::time(nullptr));
-        for (int i = 0; i < size; ++i) {
-            int randomValue = std::rand() % 100;
-            data.push_back(randomValue);
-        }
-    }
-
-    int partition(std::vector<int>& arr, int low, int high) {
+    int partition(Array& arr, int low, int high) {
         int pivot = arr[high];
         int i = low - 1;
 
-        for (int j = low; j < high; ++j) {
-            if (arr[j] <= pivot) {
-                ++i;
+        for (int j = low; j < high; j++) {
+            if (arr[j] < pivot) {
+                i++;
                 std::swap(arr[i], arr[j]);
-                ++operations;
+                partitionCount++; // Count basic operation
             }
-            ++operations;
         }
 
         std::swap(arr[i + 1], arr[high]);
-        ++operations;
-        return (i + 1);
+        partitionCount++; // Count basic operation
+
+        return i + 1;
     }
 
-    void quickSort(std::vector<int>& arr, int low, int high) {
+    void quickSort(Array& arr, int low, int high) {
         if (low < high) {
             int pivotIndex = partition(arr, low, high);
 
@@ -49,40 +54,40 @@ public:
         }
     }
 
-    void sort() {
-        operations = 0;
-        quickSort(data, 0, data.size() - 1);
-    }
-
-    void printData() const {
-        for (int i : data) {
-            std::cout << i << " ";
-        }
-        std::cout << std::endl;
-    }
-
-    int getOperations() const {
-        return operations;
+    int getPartitionCount() const {
+        return partitionCount;
     }
 };
 
 int main() {
-    QuickSort sorter;
-    int size;
-
+    int n;
     std::cout << "Enter the number of elements: ";
-    std::cin >> size;
+    std::cin >> n;
 
-    sorter.generateRandomData(size);
-    std::cout << "Generated data: ";
-    sorter.printData();
+    QuickSort quickSort;
 
-    sorter.sort();
+    QuickSort::Array arr(n);
+    srand(static_cast<unsigned int>(time(nullptr)));
+
+    for (int i = 0; i < n; i++) {
+        arr[i] = rand() % 100; // Generate random inputs from 0 to 99
+    }
+
+    std::cout << "Generated Data: ";
+    for (int i = 0; i < n; i++) {
+        std::cout << arr[i] << " ";
+    }
+    std::cout << std::endl;
+
+    quickSort.quickSort(arr, 0, n - 1);
+
     std::cout << "Sorted data: ";
-    sorter.printData();
+    for (int i = 0; i < n; i++) {
+        std::cout << arr[i] << " ";
+    }
+    std::cout << std::endl;
 
-    std::cout << "Number of basic operations: " << sorter.getOperations() << std::endl;
+    std::cout << " " << quickSort.getPartitionCount() << std::endl;
 
     return 0;
 }
-
