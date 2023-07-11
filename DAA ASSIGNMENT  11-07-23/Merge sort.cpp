@@ -1,106 +1,122 @@
 #include <iostream>
-#include <vector>
 #include <cstdlib>
 #include <ctime>
 
 class MergeSort {
 private:
-    std::vector<int> data;
-    int operations;
+    class Array {
+    public:
+        int* data;
+        int size;
+
+        Array(int n) : size(n) {
+            data = new int[size];
+        }
+
+        ~Array() {
+            delete[] data;
+        }
+
+        int& operator[](int index) {
+            return data[index];
+        }
+    };
+
+    int mergeCount;
 
 public:
-    MergeSort() : operations(0) {}
+    MergeSort() : mergeCount(0) {}
 
-    void generateRandomData(int size) {
-        data.clear();
-        data.reserve(size);
+    void merge(Array& arr, int left, int middle, int right) {
+        int leftSize = middle - left + 1;
+        int rightSize = right - middle;
 
-        std::srand(std::time(nullptr));
-        for (int i = 0; i < size; ++i) {
-            int randomValue = std::rand() % 100;  // Generates random numbers between 0 and 99
-            data.push_back(randomValue);
+        Array leftArr(leftSize);
+        Array rightArr(rightSize);
+
+        for (int i = 0; i < leftSize; i++) {
+            leftArr[i] = arr[left + i];
+            mergeCount++; // Count basic operation
         }
-    }
 
-    void merge(std::vector<int>& left, std::vector<int>& right, std::vector<int>& merged) {
-        int leftSize = left.size();
-        int rightSize = right.size();
-        int i = 0, j = 0;
+        for (int i = 0; i < rightSize; i++) {
+            rightArr[i] = arr[middle + 1 + i];
+            mergeCount++; // Count basic operation
+        }
+
+        int i = 0, j = 0, k = left;
 
         while (i < leftSize && j < rightSize) {
-            if (left[i] <= right[j]) {
-                merged.push_back(left[i]);
-                ++i;
+            if (leftArr[i] <= rightArr[j]) {
+                arr[k] = leftArr[i];
+                i++;
             } else {
-                merged.push_back(right[j]);
-                ++j;
+                arr[k] = rightArr[j];
+                j++;
             }
-            ++operations;
+            k++;
+            mergeCount++; // Count basic operation
         }
 
         while (i < leftSize) {
-            merged.push_back(left[i]);
-            ++i;
-            ++operations;
+            arr[k] = leftArr[i];
+            i++;
+            k++;
+            mergeCount++; // Count basic operation
         }
 
         while (j < rightSize) {
-            merged.push_back(right[j]);
-            ++j;
-            ++operations;
+            arr[k] = rightArr[j];
+            j++;
+            k++;
+            mergeCount++; // Count basic operation
         }
     }
 
-    void mergeSort(std::vector<int>& arr) {
-        int size = arr.size();
-        if (size <= 1)
-            return;
+    void mergeSort(Array& arr, int left, int right) {
+        if (left < right) {
+            int middle = left + (right - left) / 2;
 
-        int mid = size / 2;
-        std::vector<int> left(arr.begin(), arr.begin() + mid);
-        std::vector<int> right(arr.begin() + mid, arr.end());
-
-        mergeSort(left);
-        mergeSort(right);
-
-        arr.clear();
-        merge(left, right, arr);
-    }
-
-    void sort() {
-        operations = 0;
-        mergeSort(data);
-    }
-
-    void printData() const {
-        for (int i : data) {
-            std::cout << i << " ";
+            mergeSort(arr, left, middle);
+            mergeSort(arr, middle + 1, right);
+            merge(arr, left, middle, right);
         }
-        std::cout << std::endl;
     }
 
-    int getOperations() const {
-        return operations;
+    int getMergeCount() const {
+        return mergeCount;
     }
 };
 
 int main() {
-    MergeSort sorter;
-    int size;
+    int n;
+    std::cout << "Enter the number of inputs: ";
+    std::cin >> n;
 
-    std::cout << "Enter the number of elements: ";
-    std::cin >> size;
+    MergeSort mergeSort;
 
-    sorter.generateRandomData(size);
-    std::cout << "data: ";
-    sorter.printData();
+    MergeSort::Array arr(n);
+    srand(static_cast<unsigned int>(time(nullptr)));
 
-    sorter.sort();
+    for (int i = 0; i < n; i++) {
+        arr[i] = rand() % 100; // Generate random inputs from 0 to 99
+    }
+
+    std::cout << "Generated data: ";
+    for (int i = 0; i < n; i++) {
+        std::cout << arr[i] << " ";
+    }
+    std::cout << std::endl;
+
+    mergeSort.mergeSort(arr, 0, n - 1);
+
     std::cout << "Sorted data: ";
-    sorter.printData();
+    for (int i = 0; i < n; i++) {
+        std::cout << arr[i] << " ";
+    }
+    std::cout << std::endl;
 
-    std::cout << "Number of basic operations: " << sorter.getOperations() << std::endl;
+    std::cout << "Basic operations count: " << mergeSort.getMergeCount() << std::endl;
 
     return 0;
 }
-
