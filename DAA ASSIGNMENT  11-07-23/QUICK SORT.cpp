@@ -2,26 +2,26 @@
 #include <cstdlib>
 #include <ctime>
 
+class Array {
+public:
+    int* data;
+    int size;
+
+    Array(int n) : size(n) {
+        data = new int[size];
+    }
+
+    ~Array() {
+        delete[] data;
+    }
+
+    int& operator[](int index) {
+        return data[index];
+    }
+};
+
 class QuickSort {
 private:
-    class Array {
-    public:
-        int* data;
-        int size;
-
-        Array(int n) : size(n) {
-            data = new int[size];
-        }
-
-        ~Array() {
-            delete[] data;
-        }
-
-        int& operator[](int index) {
-            return data[index];
-        }
-    };
-
     int partitionCount;
 
 public:
@@ -51,6 +51,8 @@ public:
 
             quickSort(arr, low, pivotIndex - 1);
             quickSort(arr, pivotIndex + 1, high);
+
+            partitionCount += 2; // Two comparisons in quickSort method
         }
     }
 
@@ -66,7 +68,7 @@ int main() {
 
     QuickSort quickSort;
 
-    QuickSort::Array arr(n);
+    Array arr(n);
     srand(static_cast<unsigned int>(time(nullptr)));
 
     for (int i = 0; i < n; i++) {
@@ -87,7 +89,8 @@ int main() {
     }
     std::cout << std::endl;
 
-    std::cout << " Number of basic operation :" << quickSort.getPartitionCount() << std::endl;
+    std::cout << "Number of basic operations: " << quickSort.getPartitionCount() << std::endl;
 
     return 0;
 }
+
